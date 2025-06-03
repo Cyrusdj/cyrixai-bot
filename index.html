@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Cyrix.ai – AI Business Chatbot</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #f2f2f2 url('cyrix_ai_hologram_white.png') repeat;
+      background-size: 200px;
+      color: #222;
+    }
+    header {
+      background-color: #111;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      padding: 10px 20px;
+    }
+    header h1 {
+      font-size: 1.5em;
+      margin: 0;
+    }
+    .container {
+      max-width: 900px;
+      margin: 20px auto;
+      background: white;
+      padding: 25px;
+      border-radius: 12px;
+      box-shadow: 0 0 15px rgba(0,0,0,0.1);
+    }
+    .info-box {
+      background: #f0f0f0;
+      padding: 15px;
+      border-left: 4px solid #4caf50;
+      margin-bottom: 20px;
+      border-radius: 8px;
+    }
+    .chatbox {
+      min-height: 280px;
+      border: 1px solid #ccc;
+      padding: 12px;
+      border-radius: 8px;
+      overflow-y: auto;
+      background: #fafafa;
+    }
+    .chat-input {
+      width: 100%;
+      padding: 12px;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+      margin-top: 10px;
+    }
+    select {
+      margin: 10px 0;
+      padding: 10px;
+      border-radius: 6px;
+    }
+    form {
+      margin-top: 20px;
+    }
+    input, textarea {
+      width: 100%;
+      padding: 10px;
+      margin-top: 8px;
+      margin-bottom: 12px;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+    }
+    footer {
+      text-align: center;
+      font-size: 0.9em;
+      margin: 20px 0;
+      color: #777;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Cyrix.ai</h1>
+  </header>
+  <div class="container">
+    <div class="info-box">
+      <h2>24/7 AI-Assistent für dein Business</h2>
+      <p>Cyrix.ai ist dein smarter AI-Bot, der niemals schläft. Rund um die Uhr erreichbar – auf Deutsch, Englisch, Spanisch, Arabisch oder Chinesisch.</p>
+      <p><strong>Warum Cyrix.ai?</strong><br>
+      ✅ Sofort-Antworten auf alle W-Fragen<br>
+      ✅ Sprach- und Branchenwahl<br>
+      ✅ 100 % anpassbar<br>
+      ✅ Kostenloses Update inklusive</p>
+      <p><strong>Preis:</strong> 200 €/Monat – alle Updates inklusive.</p>
+    </div>
+
+    <label for="branche">Branche wählen:</label>
+    <select id="branche">
+      <option value="Hotel">Hotel</option>
+      <option value="Restaurant">Restaurant</option>
+      <option value="Friseur">Friseur</option>
+      <option value="Unternehmen">Kleinunternehmen</option>
+    </select>
+
+    <label for="sprache">Sprache wählen:</label>
+    <select id="sprache">
+      <option value="Deutsch">Deutsch</option>
+      <option value="English">English</option>
+      <option value="Español">Español</option>
+      <option value="العربية">العربية</option>
+      <option value="中文">中文</option>
+    </select>
+
+    <div class="chatbox" id="chatbox">
+      <p id="welcome"><strong>Cyrix AI:</strong> Willkommen! Wie kann ich dir helfen?</p>
+    </div>
+
+    <input type="text" id="userInput" class="chat-input" placeholder="Tippe deine Frage und drücke Enter..." />
+
+    <form action="mailto:kourosh.javadi@it-dach.com" method="post" enctype="text/plain">
+      <h3>Kontaktformular</h3>
+      <input type="text" name="name" placeholder="Dein Name" required />
+      <input type="email" name="email" placeholder="Deine E-Mail" required />
+      <textarea name="message" rows="4" placeholder="Deine Nachricht"></textarea>
+      <input type="submit" value="Absenden" />
+    </form>
+  </div>
+
+  <footer>
+    © Cyrix AI – Kourosh Javadi | E-Mail: kourosh.javadi@it-dach.com | Tel: 015227861844
+  </footer>
+
+<script>
+const chatbox = document.getElementById("chatbox");
+const input = document.getElementById("userInput");
+const welcomeText = document.getElementById("welcome");
+const sprache = document.getElementById("sprache");
+
+const welcomeMap = {
+  "Deutsch": "Willkommen! Wie kann ich dir helfen?",
+  "English": "Welcome! How can I assist you?",
+  "Español": "¡Bienvenido! ¿Cómo puedo ayudarte?",
+  "العربية": "مرحبًا! كيف يمكنني مساعدتك؟",
+  "中文": "欢迎！我能帮你什么？"
+};
+
+sprache.addEventListener("change", function () {
+  welcomeText.innerHTML = `<strong>Cyrix AI:</strong> ${welcomeMap[sprache.value]}`;
+});
+
+input.addEventListener("keydown", async function (e) {
+  if (e.key === "Enter") {
+    const frage = input.value;
+    const branche = document.getElementById("branche").value;
+    const language = sprache.value;
+    chatbox.innerHTML += `<p><strong>Du:</strong> ${frage}</p>`;
+    input.value = "";
+    chatbox.scrollTop = chatbox.scrollHeight;
+
+    const response = await fetch("/api/chat", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ frage, branche, sprache: language }),
+    });
+
+    const data = await response.json();
+    chatbox.innerHTML += `<p><strong>Cyrix AI:</strong> ${data.antwort}</p>`;
+    chatbox.scrollTop = chatbox.scrollHeight;
+  }
+});
+</script>
+</body>
+</html>
